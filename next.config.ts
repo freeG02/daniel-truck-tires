@@ -11,7 +11,9 @@ const nextConfig: NextConfig = staticExport
       output: "export",
       basePath,
       trailingSlash: true,
-      images: { unoptimized: true },
+      // A custom loader (not `unoptimized`) so basePath is applied to every
+      // <Image> src — see image-loader.ts.
+      images: { loader: "custom", loaderFile: "./image-loader.ts" },
     }
   : {};
 
