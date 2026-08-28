@@ -1,0 +1,408 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+
+  /* Daniel Truck and Tires brand palette, sampled from Logo/DTT Colors.jpg */
+  --brand-navy: #0d0b9d;
+  --brand-navy-dark: #011e62;
+  --brand-yellow: #fee13b;
+  --brand-blue: #0289cb;
+  --brand-orange: #fe8101;
+  --brand-red: #c80114;
+  --brand-red-dark: #a3010f;
+  --brand-cream: #f7f6f1;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+
+  --color-brand-navy: var(--brand-navy);
+  --color-brand-navy-dark: var(--brand-navy-dark);
+  --color-brand-yellow: var(--brand-yellow);
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-orange: var(--brand-orange);
+  --color-brand-red: var(--brand-red);
+  --color-brand-red-dark: var(--brand-red-dark);
+  --color-brand-cream: var(--brand-cream);
+}
+
+/* Scale the whole site up on very large monitors. Everything is sized in rem
+   (type, spacing, max-widths), so nudging the root font-size lets the layout
+   grow proportionally instead of sitting in a narrow strip. Stays at 16px on
+   screens up to 1920px, then eases up to a 22px cap on ultrawide / 4K. */
+:root {
+  font-size: clamp(16px, calc(16px + (100vw - 1920px) * 0.004), 22px);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Tailwind v4 preflight no longer sets a pointer cursor on buttons; restore it
+   so every clickable button shows the hand cursor (links already do). */
+button:not(:disabled),
+[role="button"]:not(:disabled) {
+  cursor: pointer;
+}
+
+/* Display headings matched to gmining.com */
+.font-display {
+  font-family: var(--font-display), "Arial Narrow", sans-serif;
+}
+
+/* =========================================================
+   Page-load choreography (sequence inspired by gmining.com):
+   1) menu items enter left to right
+   2) frame lines draw in (trim-path via scaleX / scaleY)
+   3) navy tiles (50/25/25) drop away top to bottom, revealing the page
+   4) the bottom-right card rises up from the bottom
+   ========================================================= */
+
+/* While the intro plays, lift the left rail above the tiles so its
+   frame-line can draw on the navy. */
+.intro-playing aside {
+  z-index: 45;
+}
+/* Elements that should stay hidden until the intro finishes. */
+.intro-playing .intro-hide {
+  opacity: 0;
+  pointer-events: none;
+}
+.intro-hide {
+  transition: opacity 0.4s ease;
+}
+
+/* Stage 1: menu items enter from the left (delay set inline per item). */
+.intro-item {
+  animation: intro-item 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes intro-item {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Sidebar icons slide in from the left (more pronounced than the menu items). */
+.intro-slide-left {
+  animation: intro-slide-left 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes intro-slide-left {
+  from {
+    opacity: 0;
+    transform: translateX(-2rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Stage 2: frame lines draw in (delay set inline per line). */
+.intro-line-x {
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: intro-line-x 0.55s cubic-bezier(0.76, 0, 0.24, 1) both;
+}
+.intro-line-y {
+  transform: scaleY(0);
+  transform-origin: top center;
+  animation: intro-line-y 0.45s cubic-bezier(0.76, 0, 0.24, 1) both;
+}
+@keyframes intro-line-x {
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes intro-line-y {
+  to {
+    transform: scaleY(1);
+  }
+}
+
+/* Stage 3: navy tiles drop away top to bottom, revealing the page. */
+.page-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  pointer-events: none;
+}
+.page-loader__panel {
+  height: 100%;
+  background: var(--brand-navy-dark);
+  transform: translateY(0);
+  animation: panel-drop 0.7s cubic-bezier(0.76, 0, 0.24, 1) both;
+}
+.page-loader__panel:nth-child(1) {
+  width: 50%;
+  animation-delay: 0.9s;
+}
+.page-loader__panel:nth-child(2) {
+  width: 25%;
+  animation-delay: 1s;
+}
+.page-loader__panel:nth-child(3) {
+  width: 25%;
+  animation-delay: 1.1s;
+}
+@keyframes panel-drop {
+  to {
+    transform: translateY(100%);
+  }
+}
+
+/* Hero heading + subtitle rise in as the tiles drop (delay set inline). */
+.hero-rise {
+  animation: hero-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Stage 4: bottom-right card rises up from the bottom (on the tile grid). */
+.intro-card {
+  animation: intro-card 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 1.85s;
+}
+@keyframes intro-card {
+  from {
+    transform: translateY(110%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+/* Card content animates in each time the rotating card changes. */
+.hero-card-content {
+  animation: hero-card-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes hero-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-loader {
+    display: none;
+  }
+  .intro-item,
+  .intro-slide-left,
+  .intro-line-x,
+  .intro-line-y,
+  .hero-rise,
+  .intro-card,
+  .hero-card-content {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* =========================================================
+   Button hover (fill sweep, from gmining.com): a contrasting
+   fill scales up from the bottom while the text color flips.
+   Defaults: navy fill + cream text (for the yellow buttons).
+   ========================================================= */
+/* Note: no `position` here so it doesn't override `fixed`/`absolute` utilities;
+   each button carries its own positioning class (relative / fixed). */
+.btn-sweep {
+  overflow: hidden;
+  transition: color 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn-sweep::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--sweep-fill, var(--brand-navy-dark));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn-sweep > * {
+  position: relative;
+  z-index: 1;
+}
+@media (hover: hover) {
+  .btn-sweep:hover::before {
+    transform: scaleX(1);
+  }
+  .btn-sweep:hover {
+    color: var(--sweep-text, var(--brand-cream));
+  }
+}
+
+/* How-it-works image: the active image wipes in (direction follows the scroll).
+   Managed imperatively so it replays on every step change, both ways. */
+.hiw-image {
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Header cart button: same fill sweep as the "Contáctanos" button (navy fill
+   growing from the left, icon flips to cream), self-contained so it doesn't
+   disturb the absolutely-positioned separator line and count badge. */
+.nav-cart-sweep::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--brand-navy-dark);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.nav-cart-sweep > svg {
+  position: relative;
+  z-index: 1;
+}
+@media (hover: hover) {
+  .nav-cart-sweep:hover::before {
+    transform: scaleX(1);
+  }
+}
+
+/* Per-card sweep colors for the rotating card's link (inverts against its bg). */
+.card-sweep-navy {
+  --sweep-fill: var(--brand-cream);
+  --sweep-text: var(--brand-navy-dark);
+}
+.card-sweep-yellow {
+  --sweep-fill: var(--brand-navy-dark);
+  --sweep-text: var(--brand-yellow);
+}
+.card-sweep-white {
+  --sweep-fill: var(--brand-navy-dark);
+  --sweep-text: var(--brand-cream);
+}
+
+/* Scroll reveal: element rises up + fades in when it enters the viewport.
+   Stagger via an inline animation-delay for a left-to-right sequence. */
+.reveal-up {
+  opacity: 0;
+}
+.reveal-up.is-visible {
+  animation: reveal-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(2.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Product card hover: a single navy rectangle rises from the bottom behind the
+   label, the border turns navy, and the label turns cream. */
+.product-card {
+  transition: border-color 0.3s ease;
+}
+/* Navy block anchored to the bottom-left corner, 50% of the card width,
+   rising up on hover. */
+.product-card__shape {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 50%;
+  height: 3.5rem;
+  background-color: var(--brand-navy-dark);
+  transform: translateY(101%);
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+/* Label matches the block (bottom-left, 50% wide, same height), vertically
+   centered and left-aligned with the card padding. */
+.product-card__label {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 50%;
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 1.5rem;
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+@media (hover: hover) {
+  .product-card:hover {
+    border-color: var(--brand-navy-dark);
+  }
+  .product-card:hover .product-card__shape {
+    transform: translateY(0);
+  }
+  .product-card:hover .product-card__label {
+    color: var(--brand-cream);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-up {
+    opacity: 1;
+  }
+  .reveal-up.is-visible {
+    animation: none;
+  }
+}
+
+/* Sidebar icon buttons: a full-width cell whose fill sweeps in from the LEFT
+   on hover (same idea as .btn-sweep, but horizontal). Cells are divided by thin
+   separators (added per-cell in the markup), matching the frame-line thickness. */
+.icon-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  transition: color 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.icon-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--brand-yellow);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.icon-btn > * {
+  position: relative;
+  z-index: 1;
+}
+@media (hover: hover) {
+  .icon-btn:hover::before {
+    transform: scaleX(1);
+  }
+  .icon-btn:hover {
+    color: var(--brand-navy-dark);
+  }
+}

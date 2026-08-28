@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#12275f"/>
+      <stop offset="0.42" stop-color="#0d1c46"/>
+      <stop offset="0.6" stop-color="#33507e"/>
+      <stop offset="0.62" stop-color="#5a6b7d"/>
+      <stop offset="1" stop-color="#20262e"/>
+    </linearGradient>
+    <linearGradient id="asphalt" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="#5b626c"/>
+      <stop offset="1" stop-color="#2b2f37"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.7" cy="0.36" r="0.4">
+      <stop offset="0" stop-color="#f0d9a0" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#f0d9a0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="vig" cx="0.5" cy="0.45" r="0.8">
+      <stop offset="0" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.5"/>
+    </radialGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.06"/></feComponentTransfer>
+      <feComposite operator="over" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+
+  <!-- sky + distant horizon -->
+  <rect width="1920" height="1080" fill="url(#sky)"/>
+  <rect width="1920" height="1080" fill="url(#sun)"/>
+
+  <!-- distant hills along the horizon -->
+  <path d="M 0 640 Q 360 590 760 632 T 1500 620 T 1920 636 L 1920 700 L 0 700 Z" fill="#26405f" opacity="0.7"/>
+  <path d="M 0 668 Q 500 636 1040 672 T 1920 664 L 1920 720 L 0 720 Z" fill="#1a2c44" opacity="0.8"/>
+
+  <!-- foreground asphalt highway sweeping toward the horizon -->
+  <path d="M -260 1080 L 760 668 L 1120 668 L 620 1080 Z" fill="url(#asphalt)"/>
+  <path d="M 560 1080 L 1160 690 L 1560 690 L 1360 1080 Z" fill="url(#asphalt)" opacity="0.9"/>
+
+  <!-- lane markings -->
+  <g stroke="#e7e2cf" stroke-width="7" stroke-dasharray="52 66" opacity="0.6">
+    <line x1="470" y1="1060" x2="930" y2="678"/>
+  </g>
+  <g stroke="#e7c23a" stroke-width="6" opacity="0.5">
+    <line x1="150" y1="1060" x2="820" y2="676"/>
+  </g>
+
+  <!-- soft dust / haze near the road -->
+  <ellipse cx="1000" cy="760" rx="520" ry="90" fill="#8a8f98" opacity="0.10"/>
+
+  <!-- grain + vignette for a photographic feel -->
+  <rect width="1920" height="1080" filter="url(#grain)" opacity="0.7"/>
+  <rect width="1920" height="1080" fill="url(#vig)"/>
+</svg>
