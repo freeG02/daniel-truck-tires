@@ -1,4 +1,7 @@
+"use client";
+
 import { buildGeneralWhatsAppLink } from "@/lib/whatsapp";
+import { useLang } from "@/lib/i18n";
 import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 import { HeroCarousel } from "@/components/HeroCarousel";
 import { HeroSidebar } from "@/components/HeroSidebar";
@@ -13,6 +16,8 @@ const h2Class =
   "font-display text-3xl font-extrabold uppercase tracking-tight text-brand-navy-dark sm:text-4xl";
 
 export default function Home() {
+  const { t } = useLang();
+
   return (
     <div>
       {/* Hero */}
@@ -33,15 +38,21 @@ export default function Home() {
         <section className="bg-brand-cream">
           <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
             <p className="font-display text-5xl font-extrabold uppercase leading-[1.02] tracking-tight text-brand-navy-dark sm:text-6xl lg:text-7xl xl:text-8xl">
-              Importamos gomas nuevas, aros y camiones directamente desde
-              Canadá, a precio de importador y sin intermediarios.
+              {t.home.statement.map((seg, i) => (
+                <span key={i} className={seg.hl ? "text-brand-red" : undefined}>
+                  {seg.t}
+                </span>
+              ))}
+            </p>
+            <p className="mt-8 max-w-2xl text-lg font-medium leading-relaxed text-black/60">
+              {t.home.complement}
             </p>
           </div>
         </section>
 
         {/* Productos */}
         <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-          <h2 className={h2Class}>Nuestros productos</h2>
+          <h2 className={h2Class}>{t.home.productsHeading}</h2>
           <ProductGrid />
         </section>
 
@@ -59,11 +70,8 @@ export default function Home() {
 
         {/* CTA final */}
         <section className="mx-auto max-w-6xl px-4 py-16 text-center sm:px-6">
-          <h2 className={h2Class}>¿Buscas una medida o modelo específico?</h2>
-          <p className="mx-auto mt-2 max-w-xl text-black/60">
-            Escríbenos por WhatsApp con lo que necesitas y te confirmamos
-            disponibilidad y precio de importador.
-          </p>
+          <h2 className={h2Class}>{t.home.ctaHeading}</h2>
+          <p className="mx-auto mt-2 max-w-xl text-black/60">{t.home.ctaBody}</p>
           <a
             href={buildGeneralWhatsAppLink()}
             target="_blank"
@@ -71,7 +79,7 @@ export default function Home() {
             className="btn-sweep relative mt-6 inline-flex h-14 items-center justify-center gap-2 bg-brand-yellow px-8 text-sm font-semibold text-brand-navy-dark"
           >
             <WhatsAppIcon className="h-5 w-5" />
-            <span>Escribir por WhatsApp</span>
+            <span>{t.home.ctaButton}</span>
           </a>
         </section>
       </div>

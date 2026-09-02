@@ -3,15 +3,17 @@
 import { useEffect, useState } from "react";
 import { site } from "@/data/site";
 import { useScrolled } from "@/hooks/useScrolled";
+import { useLang } from "@/lib/i18n";
 import { buildGeneralWhatsAppLink } from "@/lib/whatsapp";
 import { WhatsAppIcon } from "@/components/WhatsAppIcon";
-import { FacebookIcon, InstagramIcon } from "@/components/SocialIcons";
+import { FacebookIcon, InstagramIcon, TikTokIcon } from "@/components/SocialIcons";
 
 // WhatsApp sits on top of the social icons.
 const icons = [
   { href: buildGeneralWhatsAppLink(), label: "WhatsApp", Icon: WhatsAppIcon },
   { href: site.social.facebook, label: "Facebook", Icon: FacebookIcon },
   { href: site.social.instagram, label: "Instagram", Icon: InstagramIcon },
+  { href: site.social.tiktok, label: "TikTok", Icon: TikTokIcon },
 ];
 
 // Every element in the rail starts its entrance at the same time.
@@ -23,6 +25,7 @@ const ENTER = { animationDelay: "1.5s" };
  */
 export function HeroSidebar() {
   const scrolled = useScrolled();
+  const { t } = useLang();
   const iconColor = scrolled ? "text-brand-navy-dark" : "text-white";
 
   // Retract the rail as the fixed footer is revealed, so it never sits over it.
@@ -73,7 +76,7 @@ export function HeroSidebar() {
             }`}
             style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
           >
-            Importador directo · República Dominicana
+            {t.sidebar.label}
           </span>
         </div>
       </div>

@@ -1,22 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useLang } from "@/lib/i18n";
 
-const slides = [
-  {
-    image: "/hero.jpg",
-    position: "68% center",
-    lines: ["Gomas, aros", "y camiones", "importados"],
-    subtitle:
-      "Importamos gomas nuevas (no recauchadas), aros y camiones a precio de importador, desde una unidad hasta contenedores.",
-  },
-  {
-    image: "/hero-2.jpg",
-    position: "center",
-    lines: ["De Canadá a", "República", "Dominicana"],
-    subtitle:
-      "Importación directa de camiones, gomas y aros para tu flota. Sin intermediarios y a precio de importador.",
-  },
+// Photo + focal point per slide (not translatable). Text comes from the
+// dictionary, matched by index.
+const slideMeta = [
+  { image: "/hero.jpg", position: "68% center" },
+  { image: "/hero-2.jpg", position: "center" },
 ];
 
 const INTERVAL = 7000;
@@ -31,6 +22,7 @@ const ASSET_PREFIX = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
  * rise in synced with the intro curtain; later slide changes animate at once.
  */
 export function HeroCarousel() {
+  const { t } = useLang();
   const [index, setIndex] = useState(0);
   const [initial, setInitial] = useState(true);
   const parallaxRef = useRef<HTMLDivElement>(null);
@@ -56,13 +48,13 @@ export function HeroCarousel() {
 
   useEffect(() => {
     const id = setInterval(() => {
-      setIndex((v) => (v + 1) % slides.length);
+      setIndex((v) => (v + 1) % slideMeta.length);
       setInitial(false);
     }, INTERVAL);
     return () => clearInterval(id);
   }, []);
 
-  const slide = slides[index];
+  const slide = t.hero.slides[index];
 
   return (
     <>
@@ -71,7 +63,7 @@ export function HeroCarousel() {
         ref={parallaxRef}
         className="absolute inset-x-0 top-[-15%] -z-20 h-[130%] will-change-transform"
       >
-        {slides.map((s, i) => (
+        {slideMeta.map((s, i) => (
           <div
             key={s.image}
             className="absolute inset-0 bg-cover transition-opacity duration-[900ms]"

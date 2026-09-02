@@ -13,16 +13,36 @@ import {
 export type CartItem = {
   /** Unique id, the product's page path (e.g. "/gomas/12r22-5"). */
   id: string;
-  /** Human label used in the cart and the WhatsApp message. */
+  /** Human label used in the cart and the WhatsApp message (Spanish). */
   label: string;
+  /**
+   * For tires: number of HALF-CONTAINER units (the MOQ is 1/2 container, so the
+   * smallest add is 1). For everything else: unit count.
+   */
   qty: number;
+  /** "tire" items follow the container-fill / MOQ rules; others are simple. */
+  kind: "tire" | "other";
+  /** Tires only: how many tires make up half a container (the MOQ). */
+  perHalf?: number;
+  /** Tires only: the size code, e.g. "12R22.5". */
+  size?: string;
+};
+
+export type AddInput = {
+  id: string;
+  label: string;
+  kind?: "tire" | "other";
+  perHalf?: number;
+  size?: string;
+  /** How many units/half-containers to add at once (default 1). */
+  qty?: number;
 };
 
 type CartContextValue = {
   items: CartItem[];
   count: number;
   isOpen: boolean;
-  add: (item: { id: string; label: string }) => void;
+  add: (item: AddInput) => void;
   remove: (id: string) => void;
   setQty: (id: string, qty: number) => void;
   clear: () => void;
@@ -47,7 +67,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) restored = parsed;
+        if (Array.isArray(parsed)) {
+          // Back-compat: older carts had no `kind`; treat them as "other".
+          restored = parsed.map((i) => ({ kind: "other", ...i }));
+        }
       }
     } catch {
       // Ignore unavailable / malformed storage.
@@ -67,17 +90,29 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [items, hydrated]);
 
-  const add = useCallback((item: { id: string; label: string }) => {
+  const add = useCallback((item: AddInput) => {
     // Note: adding does NOT open the drawer, so the user can keep adding items
-    // without interruption. The header cart badge reflects the new count.
+    // without interruption. The header cart badge reflects the new count. For
+    // tires, one unit = half a container (the MOQ).
+    const amount = item.qty && item.qty > 0 ? item.qty : 1;
     setItems((prev) => {
       const existing = prev.find((i) => i.id === item.id);
       if (existing) {
         return prev.map((i) =>
-          i.id === item.id ? { ...i, qty: i.qty + 1 } : i,
+          i.id === item.id ? { ...i, qty: i.qty + amount } : i,
         );
       }
-      return [...prev, { id: item.id, label: item.label, qty: 1 }];
+      return [
+        ...prev,
+        {
+          id: item.id,
+          label: item.label,
+          qty: amount,
+          kind: item.kind ?? "other",
+          perHalf: item.perHalf,
+          size: item.size,
+        },
+      ];
     });
   }, []);
 

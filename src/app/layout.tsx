@@ -7,6 +7,9 @@ import { PageLoader } from "@/components/PageLoader";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { CartProvider } from "@/lib/cart";
 import { CartDrawer } from "@/components/CartDrawer";
+import { ContainerConfetti } from "@/components/ContainerConfetti";
+import { LanguageProvider } from "@/lib/i18n";
+import { AuthProvider } from "@/lib/auth";
 import { site } from "@/data/site";
 
 // Fonts matched to gmining.com: Big Shoulders (headings) + Noto Sans (body).
@@ -59,6 +62,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
         <SmoothScroll />
         <PageLoader />
+        <LanguageProvider>
+        <AuthProvider>
         <CartProvider>
           <Header />
           {/* Content sits above the fixed footer (which has a negative z-index) and
@@ -73,7 +78,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </main>
           <Footer />
           <CartDrawer />
+          <ContainerConfetti />
         </CartProvider>
+        </AuthProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

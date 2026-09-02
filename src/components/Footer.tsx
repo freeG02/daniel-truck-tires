@@ -4,12 +4,15 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { site } from "@/data/site";
+import { useLang } from "@/lib/i18n";
 
 export function Footer() {
+  const { t } = useLang();
   const year = new Date().getFullYear();
   const ref = useRef<HTMLElement>(null);
-  // Break the tagline onto a second line after "importados".
-  const [taglineHead, taglineTail] = site.tagline.split(/(?<=importados)\s+/);
+  // Break the tagline onto a second line after "importados" (Spanish only; other
+  // languages fall back to a single line).
+  const [taglineHead, taglineTail] = t.footer.tagline.split(/(?<=importados)\s+/);
 
   // The footer is fixed at the bottom, revealed as the page content slides up
   // over it (parallax). Expose its height so the layout can reserve space.
@@ -56,22 +59,22 @@ export function Footer() {
         <div className="grid gap-8 py-12 sm:grid-cols-3">
           <div>
             <h3 className="font-display text-sm font-bold uppercase tracking-widest text-brand-cream">
-              Productos
+              {t.footer.products}
             </h3>
             <ul className="mt-4 space-y-2 text-sm">
               <li>
                 <Link href="/gomas" className="transition-colors hover:text-brand-yellow">
-                  Gomas de camión
+                  {t.home.categories[0].title}
                 </Link>
               </li>
               <li>
                 <Link href="/aros" className="transition-colors hover:text-brand-yellow">
-                  Aros
+                  {t.home.categories[1].title}
                 </Link>
               </li>
               <li>
                 <Link href="/camiones" className="transition-colors hover:text-brand-yellow">
-                  Camiones importados
+                  {t.home.categories[2].title}
                 </Link>
               </li>
             </ul>
@@ -79,12 +82,12 @@ export function Footer() {
 
           <div>
             <h3 className="font-display text-sm font-bold uppercase tracking-widest text-brand-cream">
-              Empresa
+              {t.footer.company}
             </h3>
             <ul className="mt-4 space-y-2 text-sm">
               <li>
                 <Link href="/nosotros" className="transition-colors hover:text-brand-yellow">
-                  Nosotros
+                  {t.nav.nosotros}
                 </Link>
               </li>
             </ul>
@@ -92,7 +95,7 @@ export function Footer() {
 
           <div>
             <h3 className="font-display text-sm font-bold uppercase tracking-widest text-brand-cream">
-              Contacto
+              {t.footer.contact}
             </h3>
             <ul className="mt-4 space-y-2 text-sm">
               <li>{site.phoneDisplay}</li>
@@ -107,10 +110,10 @@ export function Footer() {
       <div className="border-t border-brand-cream/10">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-5 text-xs sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <span>
-            © {year} {site.name}. Todos los derechos reservados.
+            © {year} {site.name}. {t.footer.rights}
           </span>
           <span className="font-display font-bold uppercase tracking-widest">
-            Importador directo · República Dominicana
+            {t.footer.label}
           </span>
         </div>
       </div>

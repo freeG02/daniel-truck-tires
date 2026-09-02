@@ -5,7 +5,7 @@ export const site = {
   shortName: "DTT",
   tagline: "Gomas, aros y camiones importados directamente desde Canadá",
   description:
-    "Importador de gomas de camión nuevas (no recauchadas), aros de aluminio y hierro, y camiones con y sin camarote. Precios de importador, desde unidad hasta contenedores.",
+    "Importador de gomas de camión como nuevas (no recauchadas), aros de aluminio y hierro, y camiones con y sin camarote, directamente desde Canadá. Del muelle hasta su almacén, al mejor precio del mercado.",
   // TODO: reemplazar con el número real de WhatsApp Business, formato internacional sin '+' ni espacios (ej. 18095551234)
   whatsappNumber: "18095550000",
   // TODO: reemplazar con el número de teléfono real para mostrar en el sitio
@@ -14,8 +14,8 @@ export const site = {
   address: "Santo Domingo, República Dominicana",
   // TODO: reemplazar con las URLs reales de las redes sociales (dejar "" para ocultar el icono)
   social: {
-    linkedin: "",
     facebook: "",
     instagram: "",
+    tiktok: "",
   },
 } as const;

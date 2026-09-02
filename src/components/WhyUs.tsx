@@ -1,38 +1,16 @@
+"use client";
+
 import Image from "next/image";
 import { buildGeneralWhatsAppLink } from "@/lib/whatsapp";
 import { site } from "@/data/site";
+import { useLang } from "@/lib/i18n";
 import { PriceIcon, NewIcon, BoxIcon, TruckIcon } from "@/components/WhyUsIcons";
 
-const stats = [
-  { label: "Gomas nuevas", value: "100%" },
-  { label: "Importado desde", value: "Canadá" },
-  { label: "Compra mínima", value: "1 unidad" },
-];
-
-const features = [
-  {
-    Icon: PriceIcon,
-    title: "Precios de importador",
-    description: "Trabajamos directo con el importador, sin intermediarios.",
-  },
-  {
-    Icon: NewIcon,
-    title: "No recauchadas",
-    description: "Todas nuestras gomas son nuevas, nunca recauchadas.",
-  },
-  {
-    Icon: BoxIcon,
-    title: "De unidad a contenedor",
-    description: "Desde una sola unidad hasta contenedores completos.",
-  },
-  {
-    Icon: TruckIcon,
-    title: "Directo de Canadá",
-    description: "Camiones con y sin camarote, importados desde Canadá.",
-  },
-];
+const featureIcons = [PriceIcon, NewIcon, BoxIcon, TruckIcon];
 
 export function WhyUs() {
+  const { t } = useLang();
+
   return (
     <section className="flex min-h-screen items-center bg-brand-cream">
       <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
@@ -41,18 +19,17 @@ export function WhyUs() {
           <div className="flex flex-col justify-between gap-12">
             <div>
               <span className="font-display text-sm font-bold uppercase tracking-widest text-brand-navy-dark/70">
-                <span className="text-brand-red">•</span> Por qué elegirnos
+                <span className="text-brand-red">•</span> {t.why.tag}
               </span>
               <h2 className="mt-4 font-display text-4xl font-extrabold uppercase leading-[1.02] tracking-tight sm:text-5xl">
-                <span className="text-brand-navy-dark">Calidad importada</span>
+                <span className="text-brand-navy-dark">{t.why.headingLine1}</span>
                 <br />
                 <span className="text-brand-navy-dark/40">
-                  a precio de importador
+                  {t.why.headingLine2}
                 </span>
               </h2>
               <p className="mt-5 max-w-md leading-relaxed text-black/60">
-                Trabajamos directo con el importador para ofrecerte gomas, aros
-                y camiones de calidad, sin intermediarios y al mejor precio.
+                {t.why.body}
               </p>
               <a
                 href={buildGeneralWhatsAppLink()}
@@ -60,12 +37,12 @@ export function WhyUs() {
                 rel="noopener noreferrer"
                 className="btn-sweep relative mt-8 inline-flex h-14 items-center bg-brand-yellow px-8 font-display text-sm font-bold uppercase tracking-wide text-brand-navy-dark"
               >
-                <span>Contáctanos</span>
+                <span>{t.why.cta}</span>
               </a>
             </div>
 
             <dl className="border-t border-brand-navy-dark/10">
-              {stats.map((s) => (
+              {t.why.stats.map((s) => (
                 <div
                   key={s.label}
                   className="flex items-center justify-between border-b border-brand-navy-dark/10 py-4"
@@ -92,26 +69,29 @@ export function WhyUs() {
             </div>
 
             <div className="grid grid-cols-2">
-              {features.map((f, i) => (
-                <div
-                  key={f.title}
-                  className={`${
-                    i % 2 === 0
-                      ? "border-r border-brand-navy-dark/10 pr-6"
-                      : "pl-6"
-                  } ${i < 2 ? "border-b border-brand-navy-dark/10 pb-6" : "pt-6"}`}
-                >
-                  <span className="flex h-10 w-10 items-center justify-center bg-brand-navy-dark/[.06] text-brand-navy-dark">
-                    <f.Icon className="h-5 w-5" />
-                  </span>
-                  <h3 className="mt-4 font-display text-base font-bold uppercase tracking-tight text-brand-navy-dark">
-                    {f.title}
-                  </h3>
-                  <p className="mt-1 text-sm leading-relaxed text-black/60">
-                    {f.description}
-                  </p>
-                </div>
-              ))}
+              {t.why.features.map((f, i) => {
+                const Icon = featureIcons[i];
+                return (
+                  <div
+                    key={f.title}
+                    className={`${
+                      i % 2 === 0
+                        ? "border-r border-brand-navy-dark/10 pr-6"
+                        : "pl-6"
+                    } ${i < 2 ? "border-b border-brand-navy-dark/10 pb-6" : "pt-6"}`}
+                  >
+                    <span className="flex h-10 w-10 items-center justify-center bg-brand-navy-dark/[.06] text-brand-navy-dark">
+                      <Icon className="h-5 w-5" />
+                    </span>
+                    <h3 className="mt-4 font-display text-base font-bold uppercase tracking-tight text-brand-navy-dark">
+                      {f.title}
+                    </h3>
+                    <p className="mt-1 text-sm leading-relaxed text-black/60">
+                      {f.description}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

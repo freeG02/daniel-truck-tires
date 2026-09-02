@@ -7,24 +7,38 @@ import { usePathname } from "next/navigation";
 import { site } from "@/data/site";
 import { buildGeneralWhatsAppLink } from "@/lib/whatsapp";
 import { useScrolled } from "@/hooks/useScrolled";
-import { DominicanFlag } from "@/components/DominicanFlag";
+import { useLang } from "@/lib/i18n";
+import { useAuth } from "@/lib/auth";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { AuthDialog } from "@/components/AuthDialog";
 import { CartButton } from "@/components/CartButton";
 import { MenuIcon, CloseIcon } from "@/components/CartIcons";
 import { WhatsAppIcon } from "@/components/WhatsAppIcon";
-import { FacebookIcon, InstagramIcon } from "@/components/SocialIcons";
+import { FacebookIcon, InstagramIcon, TikTokIcon } from "@/components/SocialIcons";
 
-const navLinks = [
-  { href: "/gomas", label: "Gomas" },
-  { href: "/aros", label: "Aros" },
-  { href: "/camiones", label: "Camiones" },
-  { href: "/nosotros", label: "Nosotros" },
-];
+function PersonIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4.42 0-8 2.69-8 6v2h16v-2c0-3.31-3.58-6-8-6z" />
+    </svg>
+  );
+}
 
 export function Header() {
   const pathname = usePathname();
   const overlay = pathname === "/";
   const scrolled = useScrolled();
+  const { t } = useLang();
+  const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
+
+  const navLinks = [
+    { href: "/gomas", label: t.nav.gomas },
+    { href: "/aros", label: t.nav.aros },
+    { href: "/camiones", label: t.nav.camiones },
+    { href: "/nosotros", label: t.nav.nosotros },
+  ];
 
   // Close the mobile menu on route change and on Escape.
   useEffect(() => {
@@ -101,6 +115,24 @@ export function Header() {
 
         {/* Right cluster. On mobile: cart + hamburger. On desktop: flag + cart + CTA. */}
         <div className="ml-auto flex items-stretch">
+          <button
+            type="button"
+            onClick={() => setAuthOpen(true)}
+            aria-label={user ? t.auth.account : t.auth.createAccount}
+            title={user ? user.name : t.auth.createAccount}
+            className={`intro-item relative hidden items-center px-4 transition-opacity hover:opacity-70 lg:flex ${textColor}`}
+            style={{ animationDelay: "0.58s" }}
+          >
+            <span
+              className={`intro-line-y pointer-events-none absolute left-0 top-0 h-full w-px ${lineBg}`}
+              style={{ animationDelay: "0.66s" }}
+            />
+            <PersonIcon className="h-5 w-5" />
+            {user && (
+              <span className="ml-1.5 h-1.5 w-1.5 rounded-full bg-brand-yellow" />
+            )}
+          </button>
+
           <span
             className="intro-item relative hidden items-center px-5 lg:flex"
             style={{ animationDelay: "0.6s" }}
@@ -109,7 +141,7 @@ export function Header() {
               className={`intro-line-y pointer-events-none absolute left-0 top-0 h-full w-px ${lineBg}`}
               style={{ animationDelay: "0.68s" }}
             />
-            <DominicanFlag className="h-4 w-auto" />
+            <LanguageSwitcher variant="bar" tone={whiteBar ? "dark" : "light"} />
           </span>
 
           <CartButton
@@ -126,14 +158,14 @@ export function Header() {
             className="btn-sweep intro-item relative hidden items-center bg-brand-yellow px-8 font-display text-base font-bold uppercase tracking-wide text-brand-navy-dark lg:flex"
             style={{ animationDelay: "0.67s" }}
           >
-            <span>Contáctanos</span>
+            <span>{t.header.cta}</span>
           </a>
 
           {/* Hamburger (mobile only) */}
           <button
             type="button"
             onClick={() => setMenuOpen(true)}
-            aria-label="Abrir menú"
+            aria-label={t.header.openMenu}
             aria-expanded={menuOpen}
             className={`intro-item relative flex items-center px-4 transition-colors sm:px-5 lg:hidden ${
               whiteBar
@@ -183,7 +215,7 @@ export function Header() {
         <div
           role="dialog"
           aria-modal="true"
-          aria-label="Menú"
+          aria-label={t.header.menu}
           className={`absolute inset-0 flex flex-col text-brand-cream transition-[opacity,transform] duration-300 ${
             menuOpen
               ? "translate-y-0 opacity-100 delay-[320ms]"
@@ -211,7 +243,7 @@ export function Header() {
             <button
               type="button"
               onClick={() => setMenuOpen(false)}
-              aria-label="Cerrar menú"
+              aria-label={t.header.closeMenu}
               className="relative ml-auto flex items-center px-4 text-brand-yellow transition-colors hover:text-brand-cream sm:px-5"
             >
               <span className="pointer-events-none absolute left-0 top-0 h-full w-px bg-brand-cream/15" />
@@ -239,6 +271,7 @@ export function Header() {
               {[
                 { href: site.social.facebook, label: "Facebook", Icon: FacebookIcon },
                 { href: site.social.instagram, label: "Instagram", Icon: InstagramIcon },
+                { href: site.social.tiktok, label: "TikTok", Icon: TikTokIcon },
               ].map(({ href, label, Icon }) =>
                 href ? (
                   <a
@@ -262,13 +295,21 @@ export function Header() {
                 ),
               )}
             </div>
-            <div className="flex items-center gap-2">
-              <DominicanFlag className="h-4 w-auto" />
-              <span className="font-display text-sm font-bold uppercase tracking-widest text-brand-cream/80">
-                RD
-              </span>
-            </div>
+            <LanguageSwitcher variant="menu" />
           </div>
+
+          {/* Account */}
+          <button
+            type="button"
+            onClick={() => {
+              setMenuOpen(false);
+              setAuthOpen(true);
+            }}
+            className="mx-6 mb-4 flex items-center justify-center gap-2 border border-brand-cream/25 py-3 font-display text-sm font-bold uppercase tracking-wide text-brand-cream transition-colors hover:border-brand-yellow hover:text-brand-yellow"
+          >
+            <PersonIcon className="h-5 w-5" />
+            <span>{user ? user.name : t.auth.createAccount}</span>
+          </button>
 
           {/* Contact CTA */}
           <a
@@ -278,10 +319,12 @@ export function Header() {
             className="btn-sweep relative flex h-16 w-full items-center justify-center gap-2 bg-brand-yellow font-display text-base font-bold uppercase tracking-wide text-brand-navy-dark"
           >
             <WhatsAppIcon className="h-5 w-5" />
-            <span>Contáctanos</span>
+            <span>{t.header.cta}</span>
           </a>
         </div>
       </div>
+
+      {authOpen && <AuthDialog onClose={() => setAuthOpen(false)} />}
     </header>
   );
 }

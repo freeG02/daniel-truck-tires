@@ -2,35 +2,19 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { useLang } from "@/lib/i18n";
 
-const steps = [
-  {
-    title: "Escríbenos por WhatsApp",
-    description:
-      "Elige el producto y toca el botón de WhatsApp. Se abre un chat con los detalles listos para enviar.",
-    image: "/products/gomas.jpg",
-  },
-  {
-    title: "Confirmamos tu pedido",
-    description:
-      "Te confirmamos la disponibilidad, las medidas y el precio de importador.",
-    image: "/products/camiones.jpg",
-  },
-  {
-    title: "Realiza el pago",
-    description:
-      "Paga por transferencia bancaria o con el enlace de pago que te enviamos.",
-    image: "/products/aros.jpg",
-  },
-  {
-    title: "Coordina la entrega",
-    description:
-      "Al confirmar el pago, coordinamos la entrega de tu pedido.",
-    image: "/hero.jpg",
-  },
+// One image per step (not translatable), matched to the dictionary by index.
+const stepImages = [
+  "/products/gomas.jpg",
+  "/products/camiones.jpg",
+  "/products/aros.jpg",
+  "/hero.jpg",
 ];
 
 export function HowItWorks() {
+  const { t } = useLang();
+  const steps = t.how.steps;
   const containerRef = useRef<HTMLDivElement>(null);
   const stepsRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -48,7 +32,8 @@ export function HowItWorks() {
       const scrolled = Math.min(Math.max(-el.getBoundingClientRect().top, 0), total);
       const p = total > 0 ? scrolled / total : 0;
       if (fillRef.current) fillRef.current.style.height = `${p * 100}%`;
-      const a = Math.min(steps.length - 1, Math.floor(p * steps.length + 0.0001));
+      const count = stepImages.length;
+      const a = Math.min(count - 1, Math.floor(p * count + 0.0001));
       setActive((prev) => (prev === a ? prev : a));
     };
     const onScroll = () => {
@@ -132,18 +117,15 @@ export function HowItWorks() {
           <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <span className="font-display text-sm font-bold uppercase tracking-widest text-brand-navy-dark/70">
-                <span className="text-brand-red">•</span> Proceso simple
+                <span className="text-brand-red">•</span> {t.how.tag}
               </span>
               <h2 className="mt-4 font-display text-4xl font-extrabold uppercase leading-[1.02] tracking-tight text-brand-navy-dark sm:text-5xl">
-                Así de fácil es
+                {t.how.headingLine1}
                 <br />
-                hacer tu pedido
+                {t.how.headingLine2}
               </h2>
             </div>
-            <p className="max-w-sm leading-relaxed text-black/60">
-              Todavía no vendemos en línea. Coordinamos todo por WhatsApp, de
-              forma rápida y clara, desde el primer mensaje hasta la entrega.
-            </p>
+            <p className="max-w-sm leading-relaxed text-black/60">{t.how.intro}</p>
           </div>
 
           {/* Body: steps + image */}
@@ -194,11 +176,11 @@ export function HowItWorks() {
               ref={imagesRef}
               className="relative hidden h-full min-h-[320px] overflow-hidden bg-brand-navy-dark lg:block"
             >
-              {steps.map((step) => (
+              {stepImages.map((src, i) => (
                 <Image
-                  key={step.image}
-                  src={step.image}
-                  alt={step.title}
+                  key={src}
+                  src={src}
+                  alt={steps[i].title}
                   fill
                   sizes="(min-width: 1024px) 50vw, 100vw"
                   className="hiw-image object-cover"

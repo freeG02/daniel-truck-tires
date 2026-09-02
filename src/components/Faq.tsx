@@ -1,37 +1,17 @@
 "use client";
 
 import { useState } from "react";
-
-const faqs = [
-  {
-    q: "¿Las gomas son nuevas o recauchadas?",
-    a: "Todas nuestras gomas son nuevas. No vendemos gomas recauchadas.",
-  },
-  {
-    q: "¿Puedo comprar una sola unidad?",
-    a: "Sí. Vendemos desde una sola unidad hasta contenedores completos, siempre a precio de importador.",
-  },
-  {
-    q: "¿Qué formas de pago aceptan?",
-    a: "Puedes pagar por transferencia bancaria o mediante un enlace de pago que te enviamos al confirmar tu pedido.",
-  },
-  {
-    q: "¿Cuánto tarda importar un camión desde Canadá?",
-    a: "El tiempo depende del modelo y la disponibilidad. Escríbenos por WhatsApp y te damos un estimado para tu caso.",
-  },
-  {
-    q: "¿Hacen entregas?",
-    a: "Sí. Al confirmar el pago coordinamos la entrega de tu pedido. Escríbenos para conocer las opciones según tu ubicación.",
-  },
-];
+import { useLang } from "@/lib/i18n";
 
 export function Faq() {
+  const { t } = useLang();
+  const faqs = t.faq.items;
   const [open, setOpen] = useState<number | null>(null);
 
   return (
     <section className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
       <h2 className="font-display text-3xl font-extrabold uppercase tracking-tight text-brand-navy-dark sm:text-4xl">
-        Preguntas frecuentes
+        {t.faq.heading}
       </h2>
 
       <div className="mt-6 border-t border-black/10">

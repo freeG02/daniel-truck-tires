@@ -9,6 +9,11 @@ export function ProductCard({
   image,
   description,
   whatsappLabel,
+  price,
+  priceNote,
+  consultLabel = "Consultar disponibilidad",
+  tire,
+  hideBuy = false,
   compact = false,
 }: {
   href: string;
@@ -18,6 +23,16 @@ export function ProductCard({
   image: string;
   description?: string;
   whatsappLabel: string;
+  /** Formatted reference price (e.g. "RD$7,300"). */
+  price?: string;
+  /** Small note under the price (e.g. "por unidad · mín. 1/2 contenedor"). */
+  priceNote?: string;
+  /** Shown in place of a price when the product has none (e.g. trucks). */
+  consultLabel?: string;
+  /** When set, this is a tire: add-to-cart opens the container-amount picker. */
+  tire?: { perHalf: number; size: string; name?: string; priceRD?: number };
+  /** Hide the buy control (e.g. trucks, which use the quote form instead). */
+  hideBuy?: boolean;
   /** Minimal card everywhere (image + name + add-to-cart), for suggestions. */
   compact?: boolean;
 }) {
@@ -60,18 +75,30 @@ export function ProductCard({
         {description && (
           <p className={`text-sm text-black/60 ${detailClass}`}>{description}</p>
         )}
-        <p
-          className={`text-sm font-semibold text-brand-navy-dark ${detailClass}`}
-        >
-          Consultar disponibilidad
-        </p>
+        {price ? (
+          <div className={detailClass}>
+            <p className="text-base font-bold text-brand-navy-dark">{price}</p>
+            {priceNote && (
+              <p className="text-xs text-black/50">{priceNote}</p>
+            )}
+          </div>
+        ) : (
+          <p
+            className={`text-sm font-semibold text-brand-navy-dark ${detailClass}`}
+          >
+            {consultLabel}
+          </p>
+        )}
         {/* mt-auto pins the buy button to the bottom so it lines up across cards. */}
-        <BuyActions
-          productId={href}
-          productLabel={whatsappLabel}
-          className="mt-auto pt-2"
-          mode={compact ? "add-only" : "responsive"}
-        />
+        {!hideBuy && (
+          <BuyActions
+            productId={href}
+            productLabel={whatsappLabel}
+            className="mt-auto pt-2"
+            mode={compact ? "add-only" : "responsive"}
+            tire={tire}
+          />
+        )}
       </div>
     </div>
   );

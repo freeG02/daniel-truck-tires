@@ -2,47 +2,29 @@
 
 import Image from "next/image";
 import { useInView } from "@/hooks/useInView";
+import { useLang } from "@/lib/i18n";
 
 // TODO: reemplazar con testimonios reales (nombre, cargo, foto y texto).
-const testimonials = [
-  {
-    quote:
-      "Compré un juego de gomas y el precio fue mucho mejor que en la calle. Todo por WhatsApp, rápido y claro.",
-    name: "Nombre del cliente",
-    role: "Transportista",
-    image: "/testimonials/1.jpg",
-  },
-  {
-    quote:
-      "Me importaron el camión desde Canadá tal como lo pedí, con camarote. Excelente comunicación en todo el proceso.",
-    name: "Nombre del cliente",
-    role: "Empresa de carga",
-    image: "/testimonials/2.jpg",
-  },
-  {
-    quote:
-      "Pedí aros para mi flota y llegaron en la medida correcta. Volveré a comprar sin duda.",
-    name: "Nombre del cliente",
-    role: "Flota de camiones",
-    image: "/testimonials/3.jpg",
-  },
-];
+// One photo per testimonial (not translatable), matched to the dictionary by index.
+const testimonialImages = ["/testimonials/1.jpg", "/testimonials/2.jpg", "/testimonials/3.jpg"];
 
 export function Testimonials() {
   const [ref, inView] = useInView<HTMLDivElement>();
+  const { t } = useLang();
+  const testimonials = t.testimonials.items;
 
   return (
     <section className="bg-brand-navy-dark py-16 text-brand-cream sm:py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <span className="font-display text-sm font-bold uppercase tracking-widest text-brand-cream/60">
-          <span className="text-brand-yellow">•</span> Testimonios
+          <span className="text-brand-yellow">•</span> {t.testimonials.tag}
         </span>
         <h2 className="mt-4 font-display text-3xl font-extrabold uppercase tracking-tight sm:text-4xl">
-          Lo que dicen nuestros clientes
+          {t.testimonials.heading}
         </h2>
 
         <div ref={ref} className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {testimonials.map((t, i) => (
+          {testimonials.map((item, i) => (
             <div
               key={i}
               className={`reveal-up ${inView ? "is-visible" : ""}`}
@@ -54,21 +36,21 @@ export function Testimonials() {
                     0{i + 1}
                   </span>
                   <blockquote className="mt-6 text-lg leading-relaxed text-brand-cream">
-                    {t.quote}
+                    {item.quote}
                   </blockquote>
                 </div>
 
                 <div className="flex items-stretch border-t border-white/10">
                   <figcaption className="flex flex-1 flex-col justify-center p-4">
                     <span className="text-sm font-semibold text-brand-cream">
-                      {t.name}
+                      {item.name}
                     </span>
-                    <span className="text-xs text-brand-cream/50">{t.role}</span>
+                    <span className="text-xs text-brand-cream/50">{item.role}</span>
                   </figcaption>
                   <div className="relative w-14 shrink-0 overflow-hidden bg-white/[.06]">
                     <Image
-                      src={t.image}
-                      alt={t.name}
+                      src={testimonialImages[i]}
+                      alt={item.name}
                       fill
                       sizes="56px"
                       className="object-cover grayscale transition-[filter] duration-500 group-hover:grayscale-0"
